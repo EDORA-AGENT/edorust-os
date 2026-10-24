@@ -1,0 +1,110 @@
+#ifndef EFI_EFISER_H_
+#define EFI_EFISER_H_
+
+#include "efiapi.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define EFI_SERIAL_IO_PROTOCOL_GUID \
+    {0xBB25CF6F, 0xF1D4, 0x11D2, {0x9a, 0x0c, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0xfd}}
+
+#define EFI_SERIAL_IO_PROTOCOL_REVISION 0x00010000
+#define EFI_SERIAL_IO_PROTOCOL_REVISION1p1 0x00010001
+
+typedef struct _EFI_SERIAL_IO_PROTOCOL EFI_SERIAL_IO_PROTOCOL;
+
+typedef struct {
+    EFI_UINT32 ControlMask;
+    EFI_UINT32 Timeout;
+    EFI_UINT64 BaudRate;
+    EFI_UINT32 ReceiveFifoDepth;
+    EFI_UINT32 DataBits;
+    EFI_UINT32 Parity;
+    EFI_UINT32 StopBits;
+} EFI_SERIAL_IO_MODE;
+
+typedef enum {
+    EfiDefaultParity,
+    EfiNoParity,
+    EfiEvenParity,
+    EfiOddParity,
+    EfiMarkParity,
+    EfiSpaceParity
+} EFI_PARITY_TYPE;
+
+typedef enum {
+    EfiDefaultStopBits,
+    EfiOneStopBit,
+    EfiOneFiveStopBits,
+    EfiTwoStopBits
+} EFI_STOP_BITS_TYPE;
+
+typedef EFI_STATUS (EFI_API *EFI_SERIAL_RESET)(EFI_IN EFI_SERIAL_IO_PROTOCOL *This);
+
+typedef EFI_STATUS (EFI_API *EFI_SERIAL_SET_ATTRIBUTES)(
+    EFI_IN EFI_SERIAL_IO_PROTOCOL *This,
+    EFI_IN EFI_UINT64 BaudRate,
+    EFI_IN EFI_UINT32 ReceiveFifoDepth,
+    EFI_IN EFI_UINT32 Timeout,
+    EFI_IN EFI_PARITY_TYPE Parity,
+    EFI_IN EFI_UINT8 DataBits,
+    EFI_IN EFI_STOP_BITS_TYPE StopBits
+);
+
+#define EFI_SERIAL_CLEAR_TO_SEND 0x0010
+#define EFI_SERIAL_DATA_SET_READY 0x0020
+#define EFI_SERIAL_RING_INDICATE 0x0040
+#define EFI_SERIAL_CARRIER_DETECT 0x0080
+#define EFI_SERIAL_REQUEST_TO_SEND 0x0002
+#define EFI_SERIAL_DATA_TERMINAL_READY 0x0001
+#define EFI_SERIAL_INPUT_BUFFER_EMPTY 0x0100
+#define EFI_SERIAL_OUTPUT_BUFFER_EMPTY 0x0200
+#define EFI_SERIAL_HARDWARE_LOOPBACK_ENABLE 0x1000
+#define EFI_SERIAL_SOFTWARE_LOOPBACK_ENABLE 0x2000
+#define EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE 0x4000
+
+typedef EFI_STATUS (EFI_API *EFI_SERIAL_SET_CONTROL_BITS)(
+    EFI_IN EFI_SERIAL_IO_PROTOCOL *This,
+    EFI_IN EFI_UINT32 Control
+);
+
+typedef EFI_STATUS (EFI_API *EFI_SERIAL_GET_CONTROL_BITS)(
+    EFI_IN EFI_SERIAL_IO_PROTOCOL *This,
+    EFI_OUT EFI_UINT32 *Control
+);
+
+typedef EFI_STATUS (EFI_API *EFI_SERIAL_WRITE)(
+    EFI_IN EFI_SERIAL_IO_PROTOCOL *This,
+    EFI_IN EFI_OUT EFI_UINTN *BufferSize,
+    EFI_IN EFI_VOID *Buffer
+);
+
+typedef EFI_STATUS (EFI_API *EFI_SERIAL_READ)(
+    EFI_IN EFI_SERIAL_IO_PROTOCOL *This,
+    EFI_IN EFI_OUT EFI_UINTN *BufferSize,
+    EFI_OUT EFI_VOID *Buffer
+);
+
+struct _EFI_SERIAL_IO_PROTOCOL {
+    EFI_UINT32 Revision;
+    EFI_SERIAL_RESET Reset;
+    EFI_SERIAL_SET_ATTRIBUTES SetAttributes;
+    EFI_SERIAL_SET_CONTROL_BITS SetControl;
+    EFI_SERIAL_GET_CONTROL_BITS GetControl;
+    EFI_SERIAL_WRITE Write;
+    EFI_SERIAL_READ Read;
+    EFI_SERIAL_IO_MODE *Mode;
+    /* Present from EFI_SERIAL_IO_PROTOCOL_REVISION1p1 on. */
+    EFI_CONST EFI_GUID *DeviceTypeGuid;
+};
+
+#define EFI_SERIAL_TERMINAL_DEVICE_TYPE_GUID \
+    {0x6ad9a60f, 0x5815, 0x4c7c, {0x8a, 0x10, 0x50, 0x53, 0xd2, 0xbf, 0x7a, 0x1b}}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
